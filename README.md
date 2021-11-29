@@ -48,7 +48,7 @@ static void ManufacturerScanner_ScanComplete(object sender, EventArgs e)
 }
 
 ```
-## Output Example
+## Example Output
 ![Output](https://github.com/KravitzMC/IPDeviceManufacturer/blob/main/outputexample.png)
 
 
