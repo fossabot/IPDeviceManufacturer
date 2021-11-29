@@ -5,7 +5,7 @@ C# Find the vendor / manufacturer of a device description  by IP/MAC Address fro
 
 ##  Why must be this library ?
 
-✔️ Fast ip scanner throught thread parallel.
+✔️ Fast IP scanner throught thread parallel.
 
 ✔️ Vendors / Manufacturer description have over than 40000+ devices.
 
