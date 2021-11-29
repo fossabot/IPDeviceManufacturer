@@ -95,7 +95,11 @@ namespace Acolyte.Net.Manufacturer
                             || x.oui == MacAddressPattern2
                             || x.oui == MacAddressPattern3).FirstOrDefault();
 
-                            OnRaiseScanReceived(new ScanRecievedEventArgs(IPAddress.Parse(IpAddress), macIP, mac.companyName, mac.companyAddress, mac.countryCode));
+                            OnRaiseScanReceived(new ScanRecievedEventArgs(IPAddress.Parse(IpAddress),
+                                macIP, GetHostName(IpAddress),
+                                mac.companyName,
+                                mac.companyAddress,
+                                mac.countryCode));
                         }
                     }
                     catch (Exception) { }

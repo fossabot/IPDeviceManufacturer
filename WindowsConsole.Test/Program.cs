@@ -27,6 +27,7 @@ namespace WindowsConsole.Test
             Console.WriteLine(
                 $"IP Address : {args.IPAddress.ToString()} \n" +
                 $"MAC Address : {args.MACAddress} \n" +
+                $"Host Name : {args.HostName}\n" +
                 $"Network Adapter Company : {args.CompanyName} \n" +
                 $"Company Address : {args.CompanyAddress} \n" +
                 $"Country Code : {args.CountryCode}\n" +
