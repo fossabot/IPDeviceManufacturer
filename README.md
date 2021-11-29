@@ -22,7 +22,7 @@ using Acolyte.Net.Manufacturer;
 [Obsolete]
 void Main(string[] args)
 {
-    //Set an ip range from and to.
+    //Set IP Address range from and to.
     IPDeviceManufacturerScanner manufacturerScanner = new IPDeviceManufacturerScanner(IPAddress.Parse("192.168.10.1"), IPAddress.Parse("192.168.10.255"));    
             manufacturerScanner.ScanRecieved += ManufacturerScanner_ScanRecieved;
             manufacturerScanner.ScanComplete += ManufacturerScanner_ScanComplete;
