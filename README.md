@@ -44,7 +44,6 @@ static void ManufacturerScanner_ScanRecieved(object sender, ScanRecievedEventArg
 	$"Country Code : {args.CountryCode}\n" +
 	$"Country Name : {args.CountryName}\n");
 	Console.WriteLine("-----------------------------------------------------------");
-
 }
 
 static void ManufacturerScanner_ScanComplete(object sender, EventArgs e)
