@@ -6,7 +6,9 @@ C# Find the vendor / manufacturer of a device description  by IP/MAC Address fro
 ## Why must be this library ?
 
 ✅ Fast ip scanner throught thread parallel.
+
 ✅ You can scan range IP address by without pinging cause some client not response anytime. but we use Send ARP instead.
+
 ✅ Vendors / Manufacturer description have over 40000+ devices.
 
 ## Help or Feedback
