@@ -35,13 +35,13 @@ void Main(string[] args)
 
 static void ManufacturerScanner_ScanRecieved(object sender, ScanRecievedEventArgs args)
 {
-            Console.WriteLine(
-                $"IP Address : {args.IPAddress.ToString()} \n" +
-                $"MAC Address : {args.MACAddress} \n" +
-                $"Network Adapter Company : {args.CompanyName} \n" +
-                $"Company Address : {args.CompanyAddress} \n" +
-                $"Country Code : {args.CountryCode}\n" +
-                $"Country Name : {args.CountryName}\n");
+	Console.WriteLine(
+	$"IP Address : {args.IPAddress.ToString()} \n" +
+	$"MAC Address : {args.MACAddress} \n" +
+	$"Network Adapter Company : {args.CompanyName} \n" +
+	$"Company Address : {args.CompanyAddress} \n" +
+	$"Country Code : {args.CountryCode}\n" +
+	$"Country Name : {args.CountryName}\n");
 }
 
 static void ManufacturerScanner_ScanComplete(object sender, EventArgs e)
