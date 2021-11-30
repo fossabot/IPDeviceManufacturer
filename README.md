@@ -10,8 +10,6 @@ C# Find the vendor / manufacturer of a device description  by IP/MAC Address fro
 
 ✔️ Get more deivce information from IP/MAC by general can't do it.
 
-✔️ Fast IP scanner throught thread parallel.
-
 ✔️ Vendors / Manufacturer from the IEEE Standards Association have over than 40000+ devices .
 
 ✔️ You can scan range IP address by without pinging cause some client not response anytime. 
