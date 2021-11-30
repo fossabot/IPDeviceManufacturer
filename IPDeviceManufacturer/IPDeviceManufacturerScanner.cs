@@ -5,6 +5,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using LiteDB;
 
 namespace Acolyte.Net.Manufacturer
 {
@@ -25,12 +26,24 @@ namespace Acolyte.Net.Manufacturer
         /// <summary>
         /// Check Mac Address if is null.
         /// </summary>
-        private readonly string EmptyMacAddress = "00-00-00-00-00-00";
+        private readonly string EMPTY_MAC_ADDRESS = "00-00-00-00-00-00";
+
+        private readonly string MAC_ADDR_DB_NAME = "MacAddress";
 
         /// <summary>
         /// Max Postfix range ip address.
         /// </summary>
         private readonly Int32 MAX_RANGE_IP = 255;
+        private Int32 IP_NUM_FROM { get; set; }
+        private Int32 IP_NUM_TO { get; set; }
+        private string IP_PREFIX_FROM { get; set; }
+        private string IP_PREFIX_TO { get; set; }
+
+        private System.Timers.Timer timer_Scanner = null;
+
+        private LiteDatabase MACAddressVendorDB = null;
+
+        private ILiteCollection<MacAddressCollection> MACAddrCollection = null;
 
         /// <summary>
         /// Get Current Device Path Database from assembly.
@@ -43,6 +56,27 @@ namespace Acolyte.Net.Manufacturer
         /// <param name="ipAddressFrom"></param>
         /// <param name="ipAddressTo"></param>
         public IPDeviceManufacturerScanner(IPAddress ipAddressFrom, IPAddress ipAddressTo)
+        {
+            InitialCollection();
+
+            SetIPAddressRange(ipAddressFrom, ipAddressTo);
+        }
+
+        public IPDeviceManufacturerScanner()
+        {
+            InitialCollection();
+        }
+
+        private void InitialCollection()
+        {
+            if (MACAddressVendorDB == null)
+            {
+                MACAddressVendorDB = new LiteDatabase(DevicePath);
+                MACAddrCollection = MACAddressVendorDB.GetCollection<MacAddressCollection>(MAC_ADDR_DB_NAME);
+            }
+        }
+
+        public void SetIPAddressRange(IPAddress ipAddressFrom, IPAddress ipAddressTo)
         {
             this.IPAddressFrom = ipAddressFrom;
             this.IPAddressTo = ipAddressTo;
@@ -58,55 +92,68 @@ namespace Acolyte.Net.Manufacturer
         {
             var _ipAddrFrom = IPAddressFrom.ToString().Split('.');
             var _ipAddrTo = IPAddressTo.ToString().Split('.');
-            var _ipAddrPrefixFrom = $"{_ipAddrFrom[0]}.{_ipAddrFrom[1]}.{_ipAddrFrom[2]}";
-            var _ipAddrPrefixTo = $"{_ipAddrTo[0]}.{_ipAddrTo[1]}.{_ipAddrTo[2]}";
-            var _ipAddrNumFrom = Convert.ToInt32(this.IPAddressFrom.ToString().Split('.')[3]);
-            var _ipAddrNumTo = Convert.ToInt32(this.IPAddressTo.ToString().Split('.')[3]);
 
-            if (_ipAddrNumTo > MAX_RANGE_IP)
+            IP_PREFIX_FROM = $"{_ipAddrFrom[0]}.{_ipAddrFrom[1]}.{_ipAddrFrom[2]}";
+            IP_PREFIX_TO = $"{_ipAddrTo[0]}.{_ipAddrTo[1]}.{_ipAddrTo[2]}";
+
+            IP_NUM_FROM = Convert.ToInt32(this.IPAddressFrom.ToString().Split('.')[3]);
+            IP_NUM_TO = Convert.ToInt32(this.IPAddressTo.ToString().Split('.')[3]);
+
+            if (IP_NUM_TO > MAX_RANGE_IP)
                 throw new IPAddressOutOfRangeException("IP Address postfix range must between 1 - 255.");
 
-            if (_ipAddrPrefixFrom != _ipAddrPrefixTo)
+            if (IP_PREFIX_FROM != IP_PREFIX_TO)
                 throw new IPAddressInvalidRangeException("IP Address range between From and To are not equal.");
 
-            using (var db = new LiteDB.LiteDatabase(DevicePath))
+
+            if (timer_Scanner == null)
             {
-                var MacAddressDB = db.GetCollection<MacAddressCollection>("MacAddress");
+                timer_Scanner = new System.Timers.Timer();
+                timer_Scanner.Interval = 100;
+                timer_Scanner.Elapsed += Timer_Scanner_Elapsed;
+                timer_Scanner.Start();
+            }
+            else { timer_Scanner.Start(); }
+        }
 
-                Parallel.For(_ipAddrNumFrom, _ipAddrNumTo, p =>
-                {
-                    try
-                    {
-                        var IpAddress = $"{_ipAddrPrefixFrom}.{p}";
-                        IPAddress hostIPAddress = IPAddress.Parse(IpAddress);
-                        byte[] ab = new byte[6];
-                        int len = ab.Length, r = SendARP((int)hostIPAddress.Address, 0, ab, ref len);
-                        var macIP = BitConverter.ToString(ab);
+        [Obsolete]
+        private void Timer_Scanner_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            IP_NUM_FROM += 1;
 
-                        if (macIP != EmptyMacAddress)
-                        {
-                            var macStr = BitConverter.ToString(ab).Split('-');
-
-                            var MacAddressPattern1 = $"{macStr[0]}:{macStr[1]}:{macStr[2]}";
-                            var MacAddressPattern2 = $"{macStr[0]}:{macStr[1]}:{macStr[2]}:{macStr[3]}";
-                            var MacAddressPattern3 = $"{macStr[0]}:{macStr[1]}:{macStr[2]}:{macStr[3]}:{macStr[4].Remove(macStr[4].Length - 1)}";
-
-                            var mac = MacAddressDB.FindAll().Where(x => x.oui == MacAddressPattern1
-                            || x.oui == MacAddressPattern2
-                            || x.oui == MacAddressPattern3).FirstOrDefault();
-
-                            OnRaiseScanReceived(new ScanRecievedEventArgs(IPAddress.Parse(IpAddress),
-                                macIP, GetHostName(IpAddress),
-                                mac.companyName,
-                                mac.companyAddress,
-                                mac.countryCode));
-                        }
-                    }
-                    catch (Exception) { }
-                });
-
+            if (IP_NUM_FROM >= IP_NUM_TO)
+            {
                 if (ScanComplete != null)
                     ScanComplete(this, null);
+
+                IP_NUM_FROM = Convert.ToInt32(this.IPAddressFrom.ToString().Split('.')[3]);
+                timer_Scanner.Stop();
+            }
+
+
+            var IpAddress = $"{IP_PREFIX_FROM}.{IP_NUM_FROM}";
+            IPAddress hostIPAddress = IPAddress.Parse(IpAddress);
+            byte[] ab = new byte[6];
+            int len = ab.Length, r = SendARP((int)hostIPAddress.Address, 0, ab, ref len);
+            var MacAddr = BitConverter.ToString(ab);
+
+            if (MacAddr != EMPTY_MAC_ADDRESS)
+            {
+                var STR_MAC = BitConverter.ToString(ab).Split('-');
+
+                var MacAddressPattern1 = $"{STR_MAC[0]}:{STR_MAC[1]}:{STR_MAC[2]}";
+                var MacAddressPattern2 = $"{STR_MAC[0]}:{STR_MAC[1]}:{STR_MAC[2]}:{STR_MAC[3]}";
+                var MacAddressPattern3 = $"{STR_MAC[0]}:{STR_MAC[1]}:{STR_MAC[2]}:{STR_MAC[3]}:{STR_MAC[4].Remove(STR_MAC[4].Length - 1)}";
+
+                var mac = MACAddrCollection.FindAll().Where(x => x.oui == MacAddressPattern1
+                || x.oui == MacAddressPattern2
+                || x.oui == MacAddressPattern3).FirstOrDefault();
+
+                OnRaiseScanReceived(new ScanRecievedEventArgs(IPAddress.Parse(IpAddress),
+                    MacAddr, GetHostName(IpAddress),
+                    mac.companyName,
+                    mac.companyAddress,
+                    mac.countryCode));
             }
         }
 

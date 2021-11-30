@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPDeviceManufacturer", "IPD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsConsole.Test", "WindowsConsole.Test\WindowsConsole.Test.csproj", "{7E9651AB-9B31-481B-A555-59D0A9B4750F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsForms.Test", "WindowsForms.Test\WindowsForms.Test.csproj", "{74D28F08-F90A-436C-95B9-B8E882E5EB50}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{7E9651AB-9B31-481B-A555-59D0A9B4750F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E9651AB-9B31-481B-A555-59D0A9B4750F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E9651AB-9B31-481B-A555-59D0A9B4750F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74D28F08-F90A-436C-95B9-B8E882E5EB50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74D28F08-F90A-436C-95B9-B8E882E5EB50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74D28F08-F90A-436C-95B9-B8E882E5EB50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74D28F08-F90A-436C-95B9-B8E882E5EB50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
