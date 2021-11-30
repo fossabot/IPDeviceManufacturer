@@ -202,10 +202,10 @@
             // lblSc
             // 
             this.lblSc.AutoSize = true;
-            this.lblSc.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSc.Location = new System.Drawing.Point(980, 55);
+            this.lblSc.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSc.Location = new System.Drawing.Point(980, 50);
             this.lblSc.Name = "lblSc";
-            this.lblSc.Size = new System.Drawing.Size(16, 22);
+            this.lblSc.Size = new System.Drawing.Size(20, 25);
             this.lblSc.TabIndex = 7;
             this.lblSc.Text = "-";
             // 
