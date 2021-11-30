@@ -8,7 +8,7 @@ C# Find the vendor / manufacturer of a device description  by IP/MAC Address fro
 
 ##  Why must be this library ?
 
-✔️ Get more deivce information from IP Address.
+✔️ Get more deivce information from IP/MAC by general can't do it.
 
 ✔️ Fast IP scanner throught thread parallel.
 
