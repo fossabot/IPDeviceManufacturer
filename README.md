@@ -3,6 +3,9 @@ C# Find the vendor / manufacturer of a device description  by IP/MAC Address fro
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/KravitzMC/IPDeviceManufacturer/blob/main/LICENSE)
 
+##  Nuget ?
+- Coming soon......
+
 ##  Why must be this library ?
 
 ✔️ Fast IP scanner throught thread parallel.
