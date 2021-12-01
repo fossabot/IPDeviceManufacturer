@@ -69,4 +69,4 @@ Please make sure to update tests as appropriate.
 
 ## Sponsors
 
-![Sponsors](https://avatars.githubusercontent.com/u/65703447?s=200&v=4)
+![Sponsors](https://github.com/KravitzMC/IPDeviceManufacturer/blob/main/dotnetthiland.jpg)
