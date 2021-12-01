@@ -5,9 +5,11 @@ C# Find the vendor / manufacturer of a device description  by IP/MAC Address fro
 
 ## Nuget
 
-[![Nuget](https://img.shields.io/nuget/dt/IPDeviceManufacturer?style=for-the-badge)](https://www.nuget.org/packages/IPDeviceManufacturer) 
+[![Nuget](https://img.shields.io/nuget/dt/IPDeviceManufacturer?style=for-the-badge)](https://www.nuget.org/packages/Acolyte.Net.Manufacturer/1.0.0.3) 
 
 ##  Why must be this library ?
+
+✔️ Fast scan IP/MAC by using thread parallel.
 
 ✔️ Get more deivce information from IP/MAC by general can't do it.
 
