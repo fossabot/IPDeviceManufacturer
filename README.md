@@ -30,11 +30,12 @@ using Acolyte.Net.Manufacturer;
 [Obsolete]
 void Main(string[] args)
 {
-    //Set IP Address range from and to.
-    IPDeviceManufacturerScanner manufacturerScanner = new IPDeviceManufacturerScanner(IPAddress.Parse("192.168.10.1"), IPAddress.Parse("192.168.10.255"));    
-            manufacturerScanner.ScanRecieved += ManufacturerScanner_ScanRecieved;
-            manufacturerScanner.ScanComplete += ManufacturerScanner_ScanComplete;
-            manufacturerScanner.StartScan();
+     //Set IP Address range from and to.    
+     IPDeviceManufacturerScanner manufacturerScanner = new IPDeviceManufacturerScanner();
+     manufacturerScanner.SetIPAddressRange(IPAddress.Parse("192.168.1.1"), IPAddress.Parse("192.168.1.255"));
+     manufacturerScanner.ScanRecieved += ManufacturerScanner_ScanRecieved;
+     manufacturerScanner.ScanComplete += ManufacturerScanner_ScanComplete;
+     manufacturerScanner.StartScan();
 }
 
 static void ManufacturerScanner_ScanRecieved(object sender, ScanRecievedEventArgs args)
