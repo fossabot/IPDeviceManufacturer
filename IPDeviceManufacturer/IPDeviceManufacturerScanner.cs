@@ -39,8 +39,6 @@ namespace Acolyte.Net.Manufacturer
         private string IP_PREFIX_FROM { get; set; }
         private string IP_PREFIX_TO { get; set; }
 
-        private System.Timers.Timer timer_Scanner = null;
-
         private LiteDatabase MACAddressVendorDB = null;
 
         private ILiteCollection<MacAddressCollection> MACAddrCollection = null;
@@ -105,56 +103,48 @@ namespace Acolyte.Net.Manufacturer
             if (IP_PREFIX_FROM != IP_PREFIX_TO)
                 throw new IPAddressInvalidRangeException("IP Address range between From and To are not equal.");
 
-
-            if (timer_Scanner == null)
+            var tasks = new List<Task>
             {
-                timer_Scanner = new System.Timers.Timer();
-                timer_Scanner.Interval = 100;
-                timer_Scanner.Elapsed += Timer_Scanner_Elapsed;
-                timer_Scanner.Start();
-            }
-            else { timer_Scanner.Start(); }
-        }
+                Task.Run(() =>
+                {
+                    Parallel.For(IP_NUM_FROM, IP_NUM_TO, ip =>
+                    {
+                        try
+                        {
+                            var IpAddress = $"{IP_PREFIX_FROM}.{ip}";
+                            IPAddress hostIPAddress = IPAddress.Parse(IpAddress);
+                            byte[] ab = new byte[6];
+                            int len = ab.Length, r = SendARP((int)hostIPAddress.Address, 0, ab, ref len);
+                            var MacAddr = BitConverter.ToString(ab);
 
-        [Obsolete]
-        private void Timer_Scanner_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            IP_NUM_FROM += 1;
+                            if (MacAddr != EMPTY_MAC_ADDRESS)
+                            {
+                                var STR_MAC = BitConverter.ToString(ab).Split('-');
 
-            if (IP_NUM_FROM >= IP_NUM_TO)
-            {
+                                var MacAddressPattern1 = $"{STR_MAC[0]}:{STR_MAC[1]}:{STR_MAC[2]}";
+                                var MacAddressPattern2 = $"{STR_MAC[0]}:{STR_MAC[1]}:{STR_MAC[2]}:{STR_MAC[3]}";
+                                var MacAddressPattern3 = $"{STR_MAC[0]}:{STR_MAC[1]}:{STR_MAC[2]}:{STR_MAC[3]}:{STR_MAC[4].Remove(STR_MAC[4].Length - 1)}";
+
+                                var mac = MACAddrCollection.FindAll().Where(x => x.oui == MacAddressPattern1
+                                || x.oui == MacAddressPattern2
+                                || x.oui == MacAddressPattern3).FirstOrDefault();
+
+                                OnRaiseScanReceived(new ScanRecievedEventArgs(IPAddress.Parse(IpAddress),
+                                    MacAddr, GetHostName(IpAddress),
+                                    mac.companyName,
+                                    mac.companyAddress,
+                                    mac.countryCode));
+                            }
+                        }
+                        catch (Exception) { }
+                    });
+            }).ContinueWith((x)=> {
+
                 if (ScanComplete != null)
-                    ScanComplete(this, null);
+                    ScanComplete(this, null);})
+            };
 
-                IP_NUM_FROM = Convert.ToInt32(this.IPAddressFrom.ToString().Split('.')[3]);
-                timer_Scanner.Stop();
-            }
-
-
-            var IpAddress = $"{IP_PREFIX_FROM}.{IP_NUM_FROM}";
-            IPAddress hostIPAddress = IPAddress.Parse(IpAddress);
-            byte[] ab = new byte[6];
-            int len = ab.Length, r = SendARP((int)hostIPAddress.Address, 0, ab, ref len);
-            var MacAddr = BitConverter.ToString(ab);
-
-            if (MacAddr != EMPTY_MAC_ADDRESS)
-            {
-                var STR_MAC = BitConverter.ToString(ab).Split('-');
-
-                var MacAddressPattern1 = $"{STR_MAC[0]}:{STR_MAC[1]}:{STR_MAC[2]}";
-                var MacAddressPattern2 = $"{STR_MAC[0]}:{STR_MAC[1]}:{STR_MAC[2]}:{STR_MAC[3]}";
-                var MacAddressPattern3 = $"{STR_MAC[0]}:{STR_MAC[1]}:{STR_MAC[2]}:{STR_MAC[3]}:{STR_MAC[4].Remove(STR_MAC[4].Length - 1)}";
-
-                var mac = MACAddrCollection.FindAll().Where(x => x.oui == MacAddressPattern1
-                || x.oui == MacAddressPattern2
-                || x.oui == MacAddressPattern3).FirstOrDefault();
-
-                OnRaiseScanReceived(new ScanRecievedEventArgs(IPAddress.Parse(IpAddress),
-                    MacAddr, GetHostName(IpAddress),
-                    mac.companyName,
-                    mac.companyAddress,
-                    mac.countryCode));
-            }
+            Task.WaitAll();
         }
 
         /// <summary>

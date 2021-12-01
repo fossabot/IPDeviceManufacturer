@@ -31,7 +31,14 @@ namespace WindowsForms.Test
                 {
                     tbIPAddrFrom.Enabled = tbIPAddrTo.Enabled = btnScan.Enabled = true;
                     lblSc.Text = "Scan Complete";
+                    MessageBox.Show("Scan Complete", "Successfully", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }));
+            }
+            else
+            {
+                tbIPAddrFrom.Enabled = tbIPAddrTo.Enabled = btnScan.Enabled = true;
+                lblSc.Text = "Scan Complete";
+                MessageBox.Show("Scan Complete", "Successfully", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -53,6 +60,18 @@ namespace WindowsForms.Test
                         $"{args.CountryName}"
                         );
                 }));
+            }
+            else
+            {
+                DgvIPScanner.Rows.Add(
+                        $"{args.IPAddress}",
+                        $"{args.MACAddress}",
+                        $"{args.HostName}",
+                        $"{args.CompanyName}",
+                        $"{args.CompanyAddress}",
+                        $"{args.CountryCode}",
+                        $"{args.CountryName}"
+                        );
             }
         }
 
