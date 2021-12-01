@@ -3,10 +3,13 @@ C# Find the vendor / manufacturer of a device description  by IP/MAC Address fro
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/KravitzMC/IPDeviceManufacturer/blob/main/LICENSE)
 
-##  Nuget ?
-- Package coming soon......
+## Nuget
+
+[![Nuget](https://img.shields.io/nuget/dt/IPDeviceManufacturer?style=for-the-badge)](https://www.nuget.org/packages/Acolyte.Net.Manufacturer/1.0.0.3) 
 
 ##  Why must be this library ?
+
+✔️ Fast IP/MAC helper scanner by using thread parallel.
 
 ✔️ Get more deivce information from IP/MAC by general can't do it.
 
@@ -29,11 +32,12 @@ using Acolyte.Net.Manufacturer;
 [Obsolete]
 void Main(string[] args)
 {
-    //Set IP Address range from and to.
-    IPDeviceManufacturerScanner manufacturerScanner = new IPDeviceManufacturerScanner(IPAddress.Parse("192.168.10.1"), IPAddress.Parse("192.168.10.255"));    
-            manufacturerScanner.ScanRecieved += ManufacturerScanner_ScanRecieved;
-            manufacturerScanner.ScanComplete += ManufacturerScanner_ScanComplete;
-            manufacturerScanner.StartScan();
+     //Set IP Address range from and to.    
+     IPDeviceManufacturerScanner manufacturerScanner = new IPDeviceManufacturerScanner();
+     manufacturerScanner.SetIPAddressRange(IPAddress.Parse("192.168.1.1"), IPAddress.Parse("192.168.1.255"));
+     manufacturerScanner.ScanRecieved += ManufacturerScanner_ScanRecieved;
+     manufacturerScanner.ScanComplete += ManufacturerScanner_ScanComplete;
+     manufacturerScanner.StartScan();
 }
 
 static void ManufacturerScanner_ScanRecieved(object sender, ScanRecievedEventArgs args)
@@ -64,3 +68,8 @@ static void ManufacturerScanner_ScanComplete(object sender, EventArgs e)
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as appropriate.
+
+
+## Community
+
+![Sponsors](https://github.com/KravitzMC/IPDeviceManufacturer/blob/main/dotnetthiland.jpg)
